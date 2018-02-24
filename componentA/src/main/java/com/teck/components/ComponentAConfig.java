@@ -1,5 +1,6 @@
 package com.teck.components;
 
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
@@ -55,6 +56,24 @@ public class ComponentAConfig implements MessagePostProcessor {
     }
 
     public Message postProcessMessage(Message message) {
+
+        //TODO all the other workflow headers are currently set in the WorkflowManagement.addWorkflowHeaders
+
+        Map<String, Object> headers = message.getMessageProperties().getHeaders();
+
+        // Add the reply and error addresses to the workflow headers if not present
+        if(!headers.containsKey(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR)) {
+
+            String replyAddr = uniqueReplyQueueName;
+
+            // The address to which a message shall be routed upon successful completion of workflow
+            message.getMessageProperties().getHeaders().put(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR, replyAddr );
+
+            // The address to which a message shall be routed upon error/exception
+            message.getMessageProperties().getHeaders().put(WorkflowManagement.X_WKF_ERROR_ADDR_HDR, replyAddr);    
+        }
+        
+
 
         return message;
     }
