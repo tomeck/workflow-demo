@@ -1,8 +1,6 @@
 package com.teck.components;
 
 import java.io.IOException;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +26,7 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numLoops = 1;
+		int numLoops = 10000;
 
 		for (int i = 0; i < numLoops; i++) {
 			startWorkflow();
@@ -93,9 +91,6 @@ public class ComponentA implements CommandLineRunner {
 				else {
 					// TODO WHAT TO DO??
 				}
-
-				int x = 0;
-
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

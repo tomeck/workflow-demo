@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.rabbitmq.client.AMQP.Exchange;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
@@ -134,10 +132,10 @@ public class WorkflowManagement {
         addWorkflowHeaders(workflowDescriptor, reqMessage, template);
 
         // Since we just processed the first stage of the workflow, pop it and advance to the next stage
-        String nextRoutingKey = advanceWorkflowStage(reqMessage);
+        Address nextAddress = advanceWorkflowStage(reqMessage, template.getExchange());
 
         // Perform blocking send/receive (i.e. waiting on last step of workflow to post response to it)
-        Object response = template.sendAndReceive(nextRoutingKey, reqMessage);
+        Object response = template.sendAndReceive(nextAddress.getRoutingKey(), reqMessage);
 
         if( response == null ) {
 			throw new Exception("Client timed-out waiting for MQ response");
