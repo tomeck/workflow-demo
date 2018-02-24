@@ -10,7 +10,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.SendTo;
 
 public class ComponentB {
 	
@@ -44,19 +43,13 @@ public class ComponentB {
 			.build();
 		*/
 
-		String nextRoutingKey = WorkflowManagement.advanceWorkflowStage(reqMessage);
+		Address nextAddress = WorkflowManagement.advanceWorkflowStage(reqMessage, template.getExchange());
 				
-		// TODO do this if routingKey == reply-to
 		MessageProperties reqProps = reqMessage.getMessageProperties();
 		Map<String, Object> reqHeaders = reqProps.getHeaders();
 
-		// Get original replyTo address from header
-		//String sourceReplyTo = (String)reqHeaders.get(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR);
-
 		// Route to new next queue
-		//Address newAddr = new Address(sourceReplyTo);
-		Address newAddr = new Address(template.getExchange(), nextRoutingKey);
-		reqProps.setReplyToAddress(newAddr);
+		reqProps.setReplyToAddress(nextAddress);
 
 		Message respMessage = MessageBuilder
 			.withBody(msgVal.getBytes())

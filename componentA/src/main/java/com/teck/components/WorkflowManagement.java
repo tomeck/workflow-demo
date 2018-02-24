@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.amqp.core.Address;
-
-// TODO MOVE THIS TO WORKFLOW-LIB
-
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+
+
+// TODO MOVE THIS TO WORKFLOW-LIB
 
 @Service
 public class WorkflowManagement {
@@ -41,7 +41,7 @@ public class WorkflowManagement {
     // with the value of headers[X_WKF_TERMINAL_ADDR_HDR]
     public static final String RETURN_TO_ORIGINATOR_ADDR = "reply-to";
 
-    //TODO figure out how to not have to pass template.getExchange()
+    //TODO figure out how to not have to pass exchange
     public static Address advanceWorkflowStage(Message message, String exchange) {
 
         Address nextAddress = null;  // return value
@@ -129,7 +129,7 @@ public class WorkflowManagement {
     public static Message beginWorkflowAndReceive( String workflowDescriptor, Message reqMessage, RabbitTemplate template ) throws Exception {
  
         // Add the workflow headers to the message
-        addWorkflowHeaders(workflowDescriptor, reqMessage, template);
+        addWorkflowHeaders(workflowDescriptor, reqMessage);
 
         // Since we just processed the first stage of the workflow, pop it and advance to the next stage
         Address nextAddress = advanceWorkflowStage(reqMessage, template.getExchange());
@@ -155,7 +155,7 @@ public class WorkflowManagement {
     }
 
     // Populate the workflow headers on a message; called only once per workflow execution
-    protected static void addWorkflowHeaders(String workflowDescriptor, Message message, RabbitTemplate template) {
+    protected static void addWorkflowHeaders(String workflowDescriptor, Message message) {
 
         //TODO the reply-to addresses are currently set in the Config Classes' postProcessMessage()
 

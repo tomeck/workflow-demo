@@ -21,9 +21,9 @@ import org.springframework.util.ErrorHandler;
 @EnableRabbit
 public class ComponentBConfig {
 
-    public static final String INCOMING_QUEUENAME = "tut.rpc.requests";
-    private final String EXCHANGE_NAME = "tut.rpc";
-    private final String REQUEST_ROUTING_KEY = "requests";
+    private static final String EXCHANGE_NAME = "wf-demo";
+    public static final String INCOMING_QUEUENAME = "wf-demo.requests";
+    private static final String REQUEST_ROUTING_KEY = "requests";
 
     @Autowired
     private ConnectionFactory connectionFactory;

@@ -22,9 +22,9 @@ import org.springframework.util.ErrorHandler;
 @EnableRabbit
 public class ComponentCConfig {
 
-    public static final String INCOMING_QUEUENAME = "tut.rpc.processed"; // was "tut.rpc.requests"
-    private final String EXCHANGE_NAME = "tut.rpc";
-    private final String REQUEST_ROUTING_KEY = "processed";
+    private static final String EXCHANGE_NAME = "wf-demo";
+    public static final String INCOMING_QUEUENAME = "wf-demo.processed"; // was "tut.rpc.requests"
+    private static final String REQUEST_ROUTING_KEY = "processed";
 
     @Autowired
     private ConnectionFactory connectionFactory;
