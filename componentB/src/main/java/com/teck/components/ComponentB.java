@@ -23,6 +23,7 @@ public class ComponentB {
 	@RabbitListener(queues = ComponentBConfig.INCOMING_QUEUENAME)
 	public Message processMessage(Message reqMessage) {
 
+		// TODO DEBUG ONLY
 		// Print properties/headers of the received message
 		String reqCorrId = (String)reqMessage.getMessageProperties().getHeaders().get(WorkflowManagement.X_WKF_INTERNAL_CORR_ID_HDR);
 		String replyTo = reqMessage.getMessageProperties().getReplyTo();
@@ -33,28 +34,7 @@ public class ComponentB {
 		// Touch the message to indicate server processed it
 		msgVal += " | Hello from ComponentB";
 
-		/*
-		Message respMessage = MessageBuilder
-			.withBody(msgVal.getBytes())
-			.copyHeaders(reqMessage.getMessageProperties().getHeaders())
-			.copyProperties(reqMessage.getMessageProperties())
-			.build();
-		*/
-
-		Address nextAddress = WorkflowManagement.advanceWorkflowStage(reqMessage, template.getExchange());
-				
-		MessageProperties reqProps = reqMessage.getMessageProperties();
-		Map<String, Object> reqHeaders = reqProps.getHeaders();
-
-		// Route to new next queue
-		reqProps.setReplyToAddress(nextAddress);
-
-		Message respMessage = MessageBuilder
-			.withBody(msgVal.getBytes())
-			.copyHeaders(reqHeaders)
-			.copyProperties(reqProps)
-			.build();
-		
+		Message respMessage = WorkflowManagement.advanceWorkflowStage(reqMessage, msgVal.getBytes(), template.getExchange());
 
 		return respMessage;
 	}

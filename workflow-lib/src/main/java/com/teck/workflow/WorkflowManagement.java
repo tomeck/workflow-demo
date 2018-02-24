@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +40,8 @@ public class WorkflowManagement {
     // with the value of headers[X_WKF_TERMINAL_ADDR_HDR]
     public static final String RETURN_TO_ORIGINATOR_ADDR = "reply-to";
 
-    //TODO figure out how to not have to pass exchange
+
+    // TODO refactor the two overloads of advanceWorkflowStage
     public static Address advanceWorkflowStage(Message message, String exchange) {
 
         Address nextAddress = null;  // return value
@@ -123,6 +126,103 @@ public class WorkflowManagement {
         return nextAddress;
     }
 
+    //TODO figure out how to not have to pass exchange
+    public static Message advanceWorkflowStage(Message reqMessage, byte[] msgBody, String exchange) {
+
+        Message respMsg = null;  // return value
+
+        // Get the remaining/processed headers from the message
+        // TODO - handle if they are missing
+
+        MessageProperties properties = reqMessage.getMessageProperties();
+        Map<String, Object> headers = properties.getHeaders();
+        String routeRemaining = (String)headers.get(X_WKF_ROUTE_REMAIN_HDR);
+        String routeProcessed = (String)headers.get(X_WKF_ROUTE_PROCESSED_HDR);
+
+        // TODO DEBUG
+        System.out.println("incoming workflow remain: " + routeRemaining);
+        System.out.println("incoming processed: " + routeProcessed);
+
+        if(!routeRemaining.isEmpty() ) {
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode routeRemainTree = objectMapper.readTree(routeRemaining);
+                ArrayNode remainWkflwArray = (ArrayNode)routeRemainTree.get(REMAIN_WKFL_KEY);
+
+                if( remainWkflwArray != null) {
+
+                    // Current front of the remaining workflow list
+                    JsonNode curStepNode = remainWkflwArray.get(0);
+                    JsonNode curStepNameNode = curStepNode.get("Name");
+                    String curStepNameText = curStepNameNode.asText();
+                    JsonNode curStepNextAddrNode = curStepNode.get("NextAddr");
+                    Address nextAddress = null;
+
+                    if( curStepNextAddrNode != null ) {
+                        String nextRoutingKey = curStepNode.get("NextAddr").asText();
+
+                        // Handle special case where NextAddr=reply-to, 
+                        // in which case set the routing key to the original reply-to addr
+                        if(nextRoutingKey.equals(RETURN_TO_ORIGINATOR_ADDR)) {
+                            nextRoutingKey = (String)headers.get(X_WKF_TERMINAL_ADDR_HDR);
+                            nextAddress = new Address(nextRoutingKey);
+                        } else {
+                            nextAddress = new Address(exchange, nextRoutingKey);
+                        }
+                    }
+
+                    // Pop workflow
+                    ArrayNode updatedWorkflowArray = objectMapper.createArrayNode();
+                    for (int i = 1; i < remainWkflwArray.size(); i++) {
+                        updatedWorkflowArray.add(remainWkflwArray.get(i));
+                    }
+
+                    // Update processed list
+                    routeProcessed += (routeProcessed.isEmpty() ? "" : "|") + curStepNameText;
+
+                    // Update message headers
+                    if(updatedWorkflowArray.size()>0) {
+                        ObjectNode newWflwNode = objectMapper.createObjectNode();
+                        newWflwNode.set(REMAIN_WKFL_KEY, updatedWorkflowArray);
+                        routeRemaining = objectMapper.writeValueAsString(newWflwNode);
+                    }
+                    else {
+                        routeRemaining = "";
+                    }
+
+                    headers.put(X_WKF_ROUTE_REMAIN_HDR, routeRemaining);
+                    headers.put(X_WKF_ROUTE_PROCESSED_HDR, routeProcessed);
+                    properties.setReplyToAddress(nextAddress);
+                    
+                    respMsg = MessageBuilder
+                        .withBody(msgBody)
+                        .copyHeaders(headers)
+                        .copyProperties(properties)
+                        .build();
+
+                    // TODO DEBUG
+                    System.out.println("outgoing workflow remain: <" + routeRemaining +">");
+                    System.out.println("outgoing processed: <" + routeProcessed +">");
+                    System.out.println("next address: <" + nextAddress +">");
+                }
+                else {
+                    // TODO WHAT TO DO??
+                }
+
+            } catch (JsonProcessingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return respMsg;
+    }
+
+    
     public static Message beginWorkflowAndReceive( String workflowDescriptor, Message reqMessage, RabbitTemplate template ) throws Exception {
  
         // Add the workflow headers to the message
