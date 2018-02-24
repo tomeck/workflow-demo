@@ -10,19 +10,20 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.SendTo;
 
-public class ComponentB {
-	
+public class ComponentC {
+
 	@Autowired
 	private RabbitTemplate template;
 
-	private static final Logger log = LoggerFactory.getLogger(ComponentB.class);
+	private static final Logger log = LoggerFactory.getLogger(ComponentC.class);
 	
-	@RabbitListener(queues = ComponentBConfig.INCOMING_QUEUENAME)
+	@RabbitListener(queues = ComponentCConfig.INCOMING_QUEUENAME)
 	//@RabbitListener(queues = "tut.rpc.requests")
 	//@SendTo("foobar") //used when the client doesn't set replyTo.
 	public Message processMessage(Message reqMessage) {
+
+		Message respMessage = null;
 
 		// Print properties/headers of the received message
 		//String correlationId = reqMessage.getMessageProperties().getCorrelationIdString();
@@ -34,7 +35,7 @@ public class ComponentB {
 		log.info("Received message <" + msgVal + "> with internalCorrelationId " + reqCorrId +  " and replyTo " + replyTo );
 
 		// Touch the message to indicate server processed it
-		msgVal += " | Hello from ComponentB";
+		msgVal += " | Hello from ComponentC";
 
 		/*
 		Message respMessage = MessageBuilder
@@ -44,26 +45,29 @@ public class ComponentB {
 			.build();
 		*/
 
-		String nextRoutingKey = WorkflowManagement.advanceWorkflowStage(reqMessage);
+		//String nextRoutingKey = WorkflowManagement.advanceWorkflowStage(reqMessage);
+		//TODO figure out how to not have to pass template.getExchange()
+		Address newAddr = WorkflowManagement.advanceWorkflowStage(reqMessage, template.getExchange());
 				
-		// TODO do this if routingKey == reply-to
-		MessageProperties reqProps = reqMessage.getMessageProperties();
-		Map<String, Object> reqHeaders = reqProps.getHeaders();
+		if( newAddr != null ) {
+			// TODO do this if routingKey == reply-to
+			MessageProperties reqProps = reqMessage.getMessageProperties();
+			Map<String, Object> reqHeaders = reqProps.getHeaders();
 
-		// Get original replyTo address from header
-		//String sourceReplyTo = (String)reqHeaders.get(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR);
+			// Get original replyTo address from header
+			//String sourceReplyTo = (String)reqHeaders.get(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR);
 
-		// Route to new next queue
-		//Address newAddr = new Address(sourceReplyTo);
-		Address newAddr = new Address(template.getExchange(), nextRoutingKey);
-		reqProps.setReplyToAddress(newAddr);
+			// Route to new next queue
+			//Address newAddr = new Address(sourceReplyTo);
+			//Address newAddr = new Address(template.getExchange(), nextRoutingKey);
+			reqProps.setReplyToAddress(newAddr);
 
-		Message respMessage = MessageBuilder
-			.withBody(msgVal.getBytes())
-			.copyHeaders(reqHeaders)
-			.copyProperties(reqProps)
-			.build();
-		
+			respMessage = MessageBuilder
+				.withBody(msgVal.getBytes())
+				.copyHeaders(reqHeaders)
+				.copyProperties(reqProps)
+				.build();
+		}
 
 		return respMessage;
 	}

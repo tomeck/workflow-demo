@@ -1,5 +1,6 @@
 package com.teck.components;
 
+
 import org.slf4j.Logger;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Binding;
@@ -19,11 +20,11 @@ import org.springframework.util.ErrorHandler;
 
 @Configuration
 @EnableRabbit
-public class ComponentBConfig {
+public class ComponentCConfig {
 
-    public static final String INCOMING_QUEUENAME = "tut.rpc.requests";
+    public static final String INCOMING_QUEUENAME = "tut.rpc.processed"; // was "tut.rpc.requests"
     private final String EXCHANGE_NAME = "tut.rpc";
-    private final String REQUEST_ROUTING_KEY = "requests";
+    private final String REQUEST_ROUTING_KEY = "processed";
 
     @Autowired
     private ConnectionFactory connectionFactory;
@@ -49,7 +50,7 @@ public class ComponentBConfig {
         rabbitTemplate.setExchange(exchange().getName());
         return rabbitTemplate;
     }
-
+    
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
@@ -86,7 +87,7 @@ public class ComponentBConfig {
 
 	}
     @Bean
-    public ComponentB server() {
-        return new ComponentB();
+    public ComponentC server() {
+        return new ComponentC();
     }
 }

@@ -26,9 +26,9 @@ public class ComponentA implements CommandLineRunner {
 	@Override
     public void run(String... args)  {
 
-		jsonFun();
+		//jsonFun();
 
-		int numLoops = 0;
+		int numLoops = 1;
 
 		for (int i = 0; i < numLoops; i++) {
 			startWorkflow();
@@ -39,7 +39,7 @@ public class ComponentA implements CommandLineRunner {
 
 		final String REMAIN_WKFL_KEY = "remainWkflw";
 
-        String routeRemaining = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"toB\"}, {\"Name\":\"B\", \"NextAddr\":\"toC\"}, {\"Name\":\"C\"}  ]}";
+        String routeRemaining = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
         String routeProcessed = "";
 		String nextRoutingKey = "";
 
@@ -111,7 +111,7 @@ public class ComponentA implements CommandLineRunner {
 
 		// Grab a workflow descriptor
 		// TODO - obtain from config server
-		String WORKFLOW_DESCRIPTOR = "{[ {\"Name\":\"A\", \"NextAddr\":\"toB\"}, {\"Name\":\"B\", \"NextAddr\":\"toC\"}, {\"Name\":\"C\"}  ]}";
+        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"} ]}";
 
 		// Create payload
 		String payload = "Hello from Component A";
