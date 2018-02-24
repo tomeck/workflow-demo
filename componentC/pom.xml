@@ -49,6 +49,11 @@
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.teck.workflow</groupId>
+			<artifactId>workflow-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>		
 	</dependencies>
 
 	<dependencyManagement>

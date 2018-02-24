@@ -1,0 +1,7 @@
+
+
+$ mvn clean package
+
+$ mvn install:install-file -Dfile=target/workflow-lib-0.0.1-SNAPSHOT.jar -DpomFile=pom.xml
+
+	## Installing /Users/teck/Projects/IBM/Banksy/Samples/workflow-demo/workflow-lib/target/workflow-lib-0.0.1-SNAPSHOT.jar to /Users/teck/.m2/repository/com/teck/workflow/workflow-lib/0.0.1-SNAPSHOT/workflow-lib-0.0.1-SNAPSHOT.jar
