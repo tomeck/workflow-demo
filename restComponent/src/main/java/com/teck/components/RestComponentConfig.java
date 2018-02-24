@@ -1,6 +1,5 @@
 package com.teck.components;
 
-import com.teck.components.api.CatController;
 import com.teck.workflow.*;
 
 import java.util.Map;
@@ -49,15 +48,14 @@ public class RestComponentConfig implements MessagePostProcessor {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setExchange(exchange().getName());
         rabbitTemplate.setRoutingKey(REPLY_ROUTING_KEY);
-        //rabbitTemplate.setReplyAddress(EXCHANGE_NAME + "/" + REPLY_ROUTING_KEY);
         rabbitTemplate.setReplyAddress(uniqueReplyQueueName);
         rabbitTemplate.setReplyTimeout(REPLY_TIMEOUT);
         rabbitTemplate.setReplyQueue(replyQueue());
-        //rabbitTemplate.setCorrelationKey("ECK_CORR_ID");
         rabbitTemplate.setBeforePublishPostProcessors(this);
         return rabbitTemplate;
     }
 
+    // TODO check into whether this must be necessary for all workflow-initiating components
     public Message postProcessMessage(Message message) {
 
         //TODO all the other workflow headers are currently set in the WorkflowManagement.addWorkflowHeaders
@@ -99,11 +97,4 @@ public class RestComponentConfig implements MessagePostProcessor {
         factory.setReceiveTimeout(10000L);
         return factory;
     }
-
-    /*
-    @Bean
-    public CatController client() {
-        return new CatController();
-    }
-    */
 }
