@@ -19,15 +19,11 @@ public class ComponentB {
 	private static final Logger log = LoggerFactory.getLogger(ComponentB.class);
 	
 	@RabbitListener(queues = ComponentBConfig.INCOMING_QUEUENAME)
-	//@RabbitListener(queues = "tut.rpc.requests")
-	//@SendTo("foobar") //used when the client doesn't set replyTo.
 	public Message processMessage(Message reqMessage) {
 
 		// Print properties/headers of the received message
-		//String correlationId = reqMessage.getMessageProperties().getCorrelationIdString();
 		String reqCorrId = (String)reqMessage.getMessageProperties().getHeaders().get(WorkflowManagement.X_WKF_INTERNAL_CORR_ID_HDR);
 		String replyTo = reqMessage.getMessageProperties().getReplyTo();
-		//String eckCorrId = (String)reqMessage.getMessageProperties().getHeaders().get("ECK_CORR_ID");
 		String msgVal = new String(reqMessage.getBody());
 
 		log.info("Received message <" + msgVal + "> with internalCorrelationId " + reqCorrId +  " and replyTo " + replyTo );
