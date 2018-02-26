@@ -15,10 +15,13 @@ Here is the representation of the flow above (found in ComponentA.java):
 "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"},{\"Name\":\"C\", \"NextAddr\":\"requests\"}, {\"Name\":\"D\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"} ]}"
 
 ## Build steps
-Build Workflow Manager first
-$ mvn clean package -f workflow-lib/pom.xml
+Build Workflow Manager first (note that also installs the jar into your local Maven repo)
+$ mvn clean install -f workflow-lib/pom.xml
 
-Build the other components similarly: ComponentA, ComponentB, ComponentC, restComponent
+Build the processing components
+$ mvn clean package -DskipTests -f componentA/pom.xml
+
+Build the other components similarly: ComponentB, ComponentC, restComponent
 
 Start the 'processing' components: 
 $ java -jar componentA/target/componentB-0.0.1-SNAPSHOT.jar
@@ -33,3 +36,17 @@ There is a Jmeter script incuded in the restComponent folder that shows the HTTP
 that will trigger the rest controller
 $ java -jar restComponent/target/restComponent-0.0.1-SNAPSHOT.jar
 
+There is also a sample Node.js server that uses a customized amqplib-rpc to execute the WorkflowManager concept
+To run:
+
+### These next steps are required only b/c the updated amqplib-rpc has not been registered to npm central
+### It allows the local version to be linked to the NodeServer
+-- MAKE SURE componentB and componentC are running as per above
+$ cd amqplib-rpc
+$ npm install
+$ sudo npm link
+$ cd ../nodeServer
+# npm link amqplib-rpc
+$ npm install
+$ node server.js
+$ curl localhost:3000  (>>Hello from node | Hello from B.....)
