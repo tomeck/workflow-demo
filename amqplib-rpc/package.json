@@ -1,0 +1,58 @@
+{
+  "name": "amqplib-rpc",
+  "version": "3.1.0",
+  "description": "Thin Amplib utils for RabbitMQ RPC in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab --verbose --assert code --threshold 99 --ignore Reflect,WebAssembly"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tjmehta/amqplib-rpc.git"
+  },
+  "keywords": [
+    "rabbitmq",
+    "rabbit",
+    "bunny",
+    "amqp",
+    "amqplib",
+    "client",
+    "producer",
+    "rpc",
+    "produce",
+    "message",
+    "headers",
+    "properties",
+    "replyTo",
+    "correlationId",
+    "timeout"
+  ],
+  "author": "Tejesh Mehta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tjmehta/amqplib-rpc/issues"
+  },
+  "homepage": "https://github.com/tjmehta/amqplib-rpc",
+  "devDependencies": {
+    "amqplib": ">=0.2.1",
+    "code": "^1.5.0",
+    "lab": "tjmehta/lab#lab5-coverage-fix",
+    "promise-polyfill": "^3.1.0",
+    "proxyquire": "^1.7.4",
+    "shimmer": "^1.1.0",
+    "sinon": "^1.17.3",
+    "sinon-as-promised": "^4.0.0",
+    "standard": "^6.0.4"
+  },
+  "dependencies": {
+    "101": "^1.6.0",
+    "assert-args": "^1.1.2",
+    "call-me-maybe": "^1.0.1",
+    "cast-buffer": "^1.1.0",
+    "debug": "^2.2.0",
+    "first-event": "^1.0.0",
+    "throw-next-tick": "^0.1.0",
+    "timeout-then": "1.0.0",
+    "uuid": "^2.0.1"
+  }
+}
