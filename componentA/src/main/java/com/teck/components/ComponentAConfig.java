@@ -19,10 +19,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ComponentAConfig implements MessagePostProcessor {
 
-    private static final String EXCHANGE_NAME = "wf-demo";
-    private static final String REPLY_QUEUE_NAME_BASE = "wf-demo.replies.";
+    private static final String EXCHANGE_NAME =  "banksy"; //"wf-demo";
+    private static final String REPLY_QUEUE_NAME_BASE = "banksy.replies"; // "wf-demo.replies.";
     private static final String REPLY_ROUTING_KEY = "reply";
-    private static final long REPLY_TIMEOUT = 2000;
+    private static final long REPLY_TIMEOUT = 200000;
 
     private String uniqueReplyQueueName;
 
