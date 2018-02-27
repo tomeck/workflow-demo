@@ -52,7 +52,9 @@ There is also a sample Node.js server that uses a customized amqplib-rpc to exec
 *The ```npm link``` steps are required only b/c the updated amqplib-rpc has not been registered to npm central. It allows the local version to be linked to the NodeServer*
 
 
--- MAKE SURE componentB and componentC are running as per above
+**MAKE SURE componentB and componentC are running as per above**
+
+```
 $ cd amqplib-rpc
 $ npm install
 $ sudo npm link
@@ -61,3 +63,4 @@ $ cd ../nodeServer
 $ npm install
 $ node server.js
 $ curl localhost:3000  (>>Hello from node | Hello from B.....)
+```
