@@ -65,9 +65,8 @@ var initiatePaymentPayload = {
     }
 }
 
-var workflow = { remainWkflw:[ {Name:"psd2-uk-to-isf", NextAddr:"banksy.q2"}, {Name:"internal-router1", NextAddr:"banksy.q3"}, {Name:"internal-router2", NextAddr:"banksy.q4"}, {Name:"internal-router3", NextAddr:"banksy.q5"}, {Name:"internal-router4", NextAddr:"reply-to"} ]}
+var workflow = { remainWkflw:[ {Name:"psd2-uk-to-isf", NextAddr:"banksy.q2"}, {Name:"internal-router1", NextAddr:"banksy.q3"}, {Name:"isf-to-pacs008", NextAddr:"banksy.q4"}, {Name:"internal-router3", NextAddr:"banksy.q5"}, {Name:"internal-router4", NextAddr:"reply-to"} ]}
 
-//open-banking/payments
 app.post("/open-banking/payments", function(req, res) {
     open.then(function(connection) {
         //console.log(req.headers)
