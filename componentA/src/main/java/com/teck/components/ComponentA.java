@@ -28,7 +28,7 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numLoops = 1;
+		int numLoops = 10;
 
 		for (int i = 0; i < numLoops; i++) {
 			startWorkflow();
@@ -108,7 +108,7 @@ public class ComponentA implements CommandLineRunner {
 
 		// Grab a workflow descriptor
 		// TODO - obtain from config server
-        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"banksy.q6\"}, {\"Name\":\"B\", \"NextAddr\":\"banksy.q7\"},{\"Name\":\"C\", \"NextAddr\":\"banksy.q8\"}, {\"Name\":\"D\", \"NextAddr\":\"reply-to\"} ]}";
+        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"componentA\", \"NextAddr\":\"banksy.q1\"}, {\"Name\":\"psd2-uk-to-isf\", \"NextAddr\":\"banksy.q2\"},{\"Name\":\"internal-router\", \"NextAddr\":\"banksy.q3\"}, {\"Name\":\"internal-router\", \"NextAddr\":\"reply-to\"} ]}";
 
 		// Create payload
 		String payload = "Hello from Component A";

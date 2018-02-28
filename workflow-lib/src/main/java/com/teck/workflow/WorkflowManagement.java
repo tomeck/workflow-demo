@@ -33,6 +33,9 @@ public class WorkflowManagement {
     // The route processed thus far
     public static final String X_WKF_ROUTE_PROCESSED_HDR = "X-WKF-ROUTE-PROCESSED"; 
 
+    // When non-empty, indicates the message carries an exception
+    public static final String X_WKF_ERROR_MSG_HDR = "X-WKF-ERROR-MSG"; 
+
     // Json attribute name within X-WKF-ROUTE-REMAIN
     public static final String REMAIN_WKFL_KEY = "remainWkflw";
 
@@ -222,6 +225,23 @@ public class WorkflowManagement {
         return respMsg;
     }
 
+    // Send the exception to the queue specified in the X_WKF_ERROR_ADDR_HDR header
+    public static Message handleError( Message offendingMessage, Exception e) {
+
+        MessageProperties properties = offendingMessage.getMessageProperties();
+        Map<String, Object> headers = properties.getHeaders();
+        properties.setReplyToAddress(new Address((String)headers.get(X_WKF_ERROR_ADDR_HDR)));
+        headers.put(X_WKF_ERROR_MSG_HDR, true);
+        String errMessage = e.toString();
+
+        Message respMsg = MessageBuilder
+            .withBody(errMessage.getBytes())
+            .copyHeaders(headers)
+            .copyProperties(properties)
+            .build();
+
+        return respMsg;
+    }
     
     public static Message beginWorkflowAndReceive( String workflowDescriptor, Message reqMessage, RabbitTemplate template ) throws Exception {
  
