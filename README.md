@@ -4,6 +4,12 @@ Demo containing multiple headless and REST components illustrating how to use te
 ## Prerequisites
 Install Docker image of RabbitMQ
 
+Create a 'direct' exchange named 'wf-demo'
+
+Create a queue 'wf-demo.requests' bound to exchange 'wf-demo' with routing key 'wf-demo.requests'
+
+Create a queue 'wf-demo.processed' bound to exchange 'wf-demo' with routing key 'wf-demo.processed'
+
 ## Message flow
 
 `componentA --> [wf-demo/wf-demo.requests] --> componentB --> [wf-demo/wf-demo.processed] --> componentC
@@ -29,9 +35,9 @@ Build the processing components
 
 Start the 'processing' components: 
 
-```$ java -jar componentA/target/componentB-0.0.1-SNAPSHOT.jar```
+```$ java -jar componentB/target/componentB-0.0.1-SNAPSHOT.jar```
 
-```$ java -jar componentB/target/componentC-0.0.1-SNAPSHOT.jar```
+```$ java -jar componentC/target/componentC-0.0.1-SNAPSHOT.jar```
 
 
 Now start the 'sourcing' component, ComponentA, which will immediately start placing queue messages on the input queue

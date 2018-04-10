@@ -25,16 +25,93 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">bankID</stringProp>
+              <stringProp name="Header.value">000001-CMA_Bank_1-GBR</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">accept</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Local nodeServer - initiate Payment" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;Data&quot;: {&#xd;
+        &quot;Initiation&quot;: {&#xd;
+            &quot;InstructionIdentification&quot;: &quot;5791997839278080&quot;,&#xd;
+            &quot;EndToEndIdentification&quot;: &quot;8125371765489664&quot;,&#xd;
+            &quot;InstructedAmount&quot;: {&#xd;
+                &quot;Amount&quot;: &quot;700.00&quot;,&#xd;
+                &quot;Currency&quot;: &quot;EUR&quot;&#xd;
+            },&#xd;
+            &quot;DebtorAgent&quot;: {&#xd;
+                &quot;SchemeName&quot;: &quot;BICFI&quot;,&#xd;
+                &quot;Identification&quot;: &quot;AAAAGB2L&quot;&#xd;
+            },&#xd;
+            &quot;DebtorAccount&quot;: {&#xd;
+                &quot;SchemeName&quot;: &quot;IBAN&quot;,&#xd;
+                &quot;Identification&quot;: &quot;IE29AIBK93115212345678&quot;,&#xd;
+                &quot;Name&quot;: &quot;Gary Kean&quot;,&#xd;
+                &quot;SecondaryIdentification&quot;: &quot;6686302651023360&quot;&#xd;
+            },&#xd;
+            &quot;CreditorAgent&quot;: {&#xd;
+                &quot;SchemeName&quot;: &quot;BICFI&quot;,&#xd;
+                &quot;Identification&quot;: &quot;AAAAGB2K&quot;&#xd;
+            },&#xd;
+            &quot;CreditorAccount&quot;: {&#xd;
+                &quot;SchemeName&quot;: &quot;IBAN&quot;,&#xd;
+                &quot;Identification&quot;: &quot;IE29AIBK93115212345676&quot;,&#xd;
+                &quot;Name&quot;: &quot;Carlo Marcoli&quot;,&#xd;
+                &quot;SecondaryIdentification&quot;: &quot;8380390651723776&quot;&#xd;
+            },&#xd;
+            &quot;RemittanceInformation&quot;: {&#xd;
+                &quot;Unstructured&quot;: &quot;emeherpakkaodafeofiu&quot;,&#xd;
+                &quot;Reference&quot;: &quot;ehoorepre&quot;&#xd;
+            }&#xd;
+        }&#xd;
+    },&#xd;
+    &quot;Risk&quot;: {&#xd;
+        &quot;PaymentContextCode&quot;: &quot;PersonToPerson&quot;,&#xd;
+        &quot;MerchantCategoryCode&quot;: &quot;nis&quot;,&#xd;
+        &quot;MerchantCustomerIdentification&quot;: &quot;1130294929260544&quot;,&#xd;
+        &quot;DeliveryAddress&quot;: {&#xd;
+            &quot;AddressLine&quot;: [&#xd;
+                &quot;totbelsanagrusa&quot;&#xd;
+            ],&#xd;
+            &quot;StreetName&quot;: &quot;Morning Road&quot;,&#xd;
+            &quot;BuildingNumber&quot;: &quot;62&quot;,&#xd;
+            &quot;PostCode&quot;: &quot;G3 5HY&quot;,&#xd;
+            &quot;TownName&quot;: &quot;Glasgow&quot;,&#xd;
+            &quot;CountrySubDivision&quot;: [&#xd;
+                &quot;Scotland&quot;&#xd;
+            ],&#xd;
+            &quot;Country&quot;: &quot;GB&quot;&#xd;
+        }&#xd;
+    }&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">3000</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/open-banking/payments</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -118,6 +195,42 @@
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

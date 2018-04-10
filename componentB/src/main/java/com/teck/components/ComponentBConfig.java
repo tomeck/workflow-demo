@@ -17,6 +17,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ErrorHandler;
 
+// TODO JTE move the 3 string constants into application.properties
+// e.g.
+//     @Value("${spring.rabbitmq.host}")
+//     lprivate String hostname;
+
+// TODO JTE factor all the code in ComponentBConfig into protected base class ComponentConfig
+
 @Configuration
 @EnableRabbit
 public class ComponentBConfig {
@@ -54,8 +61,8 @@ public class ComponentBConfig {
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
-        factory.setConcurrentConsumers(5);
-        factory.setMaxConcurrentConsumers(20);
+        factory.setConcurrentConsumers(5);  // TODO JTE this should be read from application.properties
+        factory.setMaxConcurrentConsumers(20); // TODO ditto
         factory.setErrorHandler(errorHandler());
         return factory;
     }

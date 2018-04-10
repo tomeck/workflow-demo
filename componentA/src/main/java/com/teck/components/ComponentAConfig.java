@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ComponentAConfig implements MessagePostProcessor {
 
-    private static final String EXCHANGE_NAME =  "banksy"; //"wf-demo";
-    private static final String REPLY_QUEUE_NAME_BASE = "banksy.replies"; // "wf-demo.replies.";
+    private static final String EXCHANGE_NAME =  "wf-demo";
+    private static final String REPLY_QUEUE_NAME_BASE = "wf-demo.replies.";
     private static final String REPLY_ROUTING_KEY = "reply";
     private static final long REPLY_TIMEOUT = 200000;
 
@@ -53,13 +53,15 @@ public class ComponentAConfig implements MessagePostProcessor {
         rabbitTemplate.setReplyTimeout(REPLY_TIMEOUT);
         rabbitTemplate.setReplyQueue(replyQueue());
         //rabbitTemplate.setCorrelationKey("ECK_CORR_ID");
-        rabbitTemplate.setBeforePublishPostProcessors(this);
+        rabbitTemplate.setBeforePublishPostProcessors(this); // causes this.postProcessMessage() to be invoked after message has been created
         return rabbitTemplate;
     }
 
-    public Message postProcessMessage(Message message) {
-
-        //TODO all the other workflow headers are currently set in the WorkflowManagement.addWorkflowHeaders
+        // Set header for name of queue to route message upon successful completion (this will be the unique send-to queue for each workflow instance)
+        // Set header for name of error queue to route errors to
+        //TODO all the other workflow headers are currently set in the WorkflowManagement.addWorkflowHeaders, so really need a way to obviate the need for this
+        // But it's only needed for components that initiate a workflow
+        public Message postProcessMessage(Message message) {
 
         Map<String, Object> headers = message.getMessageProperties().getHeaders();
 
