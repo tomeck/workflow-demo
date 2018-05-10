@@ -6,9 +6,9 @@ Install Docker image of RabbitMQ
 
 Create a 'direct' exchange named 'wf-demo'
 
-Create a queue 'wf-demo.requests' bound to exchange 'wf-demo' with routing key 'wf-demo.requests'
+Create a queue 'wf-demo.requests' bound to exchange 'wf-demo' with routing key 'requests'
 
-Create a queue 'wf-demo.processed' bound to exchange 'wf-demo' with routing key 'wf-demo.processed'
+Create a queue 'wf-demo.processed' bound to exchange 'wf-demo' with routing key 'processed'
 
 ## Message flow
 

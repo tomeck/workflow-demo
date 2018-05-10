@@ -15,6 +15,7 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import java.util.concurrent.CompletableFuture;
 
 public class ComponentA implements CommandLineRunner {
 
@@ -28,10 +29,12 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numLoops = 500;
+		int numLoops = 2000; // will run out of thread space if increase too much more
 
 		for (int i = 0; i < numLoops; i++) {
-			startWorkflow();
+			//startWorkflow();
+			// JTE make all the workflows run in parallel
+			new Thread( () -> startWorkflow() ).start();
 		}
 	}
 	
@@ -102,7 +105,6 @@ public class ComponentA implements CommandLineRunner {
 			}
 		}
 	}
-
 
 	protected void startWorkflow()  {
 
