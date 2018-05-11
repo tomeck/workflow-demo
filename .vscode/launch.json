@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
     {
         "type": "java",
         "name": "Debug (Launch)",
@@ -15,7 +14,6 @@
         "mainClass": "",
         "args": ""
     },
-
         {
             "type": "java",
             "name": "Debug (Launch)-ComponentAApplication<componentA>",
@@ -29,45 +27,22 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-ComponentCApplication<componentC>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "com.teck.components.ComponentCApplication",
-            "projectName": "mqserver",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-RestComponent",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "com.teck.components.RestComponentApplication",
-            "projectName": "restComponent",
-            "args": ""
-        },
-       {
-            "type": "java",
-            "name": "Debug (Launch)-router<internal-router>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "com.ibm.banksy.routers.router",
-            "projectName": "internal-router",
-            "args": ""
-        },
-        {
-            "type": "java",
             "name": "Debug (Launch)-MavenWrapperDownloader",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopOnEntry": false,
             "mainClass": "MavenWrapperDownloader",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-router",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "com.ibm.banksy.routers.router",
             "args": ""
         },
         {
@@ -83,13 +58,24 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-MqServerApplication<mqserver>",
+            "name": "Debug (Launch)-ComponentCApplication<mqserver>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopOnEntry": false,
-            "mainClass": "com.teck.mqserver.MqServerApplication",
+            "mainClass": "com.teck.components.ComponentCApplication",
             "projectName": "mqserver",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-RestComponentApplication<restComponent>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "com.teck.components.RestComponentApplication",
+            "projectName": "restComponent",
             "args": ""
         },
         {

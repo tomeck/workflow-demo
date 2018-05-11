@@ -1,62 +1,31 @@
 package com.teck.components;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+
+/*
 import org.slf4j.Logger;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.ConditionalRejectingErrorHandler;
 import org.springframework.amqp.rabbit.listener.exception.ListenerExecutionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ErrorHandler;
-
-// TODO JTE move the 3 string constants into application.properties
-// e.g.
-//     @Value("${spring.rabbitmq.host}")
-//     lprivate String hostname;
-
-// TODO JTE factor all the code in ComponentBConfig into protected base class ComponentConfig
+*/
 
 @Configuration
 @EnableRabbit
 public class ComponentBConfig {
 
-    private static final String EXCHANGE_NAME = "wf-demo";
-    public static final String INCOMING_QUEUENAME = "wf-demo.requests";
-    private static final String REQUEST_ROUTING_KEY = "requests";
-
+    // TODO JTE uncomment code below if want to customize RabbitListener, e.g. to install custom error handler
+    //
+    // TODO JTE factor all the code in ComponentBConfig into protected base class ComponentConfig
+    /*
     @Autowired
     private ConnectionFactory connectionFactory;
     
-    @Bean
-    public Queue incomingQueue() {
-        return new Queue(INCOMING_QUEUENAME);
-    }
-
-    @Bean
-    public DirectExchange exchange() {
-        return new DirectExchange(EXCHANGE_NAME);
-    }
-
-    @Bean
-    public Binding binding(DirectExchange exchange, Queue queue) {
-        return BindingBuilder.bind(queue).to(exchange).with(REQUEST_ROUTING_KEY);
-    }
-
-    @Bean
-    public RabbitTemplate amqpTemplate() {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setExchange(exchange().getName());
-        return rabbitTemplate;
-    }
-
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
@@ -91,7 +60,9 @@ public class ComponentBConfig {
 			return super.isFatal(t);
 		}
 
-	}
+    }
+    */
+
     @Bean
     public ComponentB server() {
         return new ComponentB();

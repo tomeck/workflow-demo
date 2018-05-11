@@ -15,12 +15,14 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import java.util.concurrent.CompletableFuture;
 
 public class ComponentA implements CommandLineRunner {
 
 	@Autowired
 	private RabbitTemplate template;
+
+	@Autowired
+    private ComponentAConfig config;
 
 	private static final Logger log = LoggerFactory.getLogger(ComponentA.class);
 
@@ -29,7 +31,7 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numLoops = 2000; // will run out of thread space if increase too much more
+		int numLoops = 1000; // will run out of thread space if increase too much more
 
 		for (int i = 0; i < numLoops; i++) {
 			//startWorkflow();
@@ -111,7 +113,8 @@ public class ComponentA implements CommandLineRunner {
 		// Grab a workflow descriptor
 		// TODO - obtain from config server
         //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"componentA\", \"NextAddr\":\"banksy.q1\"}, {\"Name\":\"psd2-uk-to-isf\", \"NextAddr\":\"banksy.q2\"},{\"Name\":\"internal-router\", \"NextAddr\":\"banksy.q3\"}, {\"Name\":\"internal-router\", \"NextAddr\":\"reply-to\"} ]}";
-        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
+        //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
+        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"apicontroller\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transformer-1-transform.psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transformer-2-isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmitter-1-tobank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transformer-3-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transformer-4-isftopsd2resp\", \"NextAddr\":\"reply-to\"}  ]}";
 
 		// Create payload
 		String payload = "Hello from Component A";
@@ -125,7 +128,7 @@ public class ComponentA implements CommandLineRunner {
 
 		try {
 			// Begin workflow and wait for ultimate response; confirms that internal correlationId matches req-resp
-			Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template);
+			Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template, config.replyQueueName());
 
 			// DEBUG ONLY
 			String respVal = new String(respMessage.getBody());

@@ -243,10 +243,10 @@ public class WorkflowManagement {
         return respMsg;
     }
     
-    public static Message beginWorkflowAndReceive( String workflowDescriptor, Message reqMessage, RabbitTemplate template ) throws Exception {
+    public static Message beginWorkflowAndReceive( String workflowDescriptor, Message reqMessage, RabbitTemplate template, String replyQueueName ) throws Exception {
  
         // Add the workflow headers to the message
-        addWorkflowHeaders(workflowDescriptor, reqMessage);
+        addWorkflowHeaders(workflowDescriptor, replyQueueName, reqMessage);
 
         // Since we just processed the first stage of the workflow, pop it and advance to the next stage
         Address nextAddress = advanceWorkflowStage(reqMessage, template.getExchange());
@@ -272,9 +272,7 @@ public class WorkflowManagement {
     }
 
     // Populate the workflow headers on a message; called only once per workflow execution
-    protected static void addWorkflowHeaders(String workflowDescriptor, Message message) {
-
-        //TODO the reply-to addresses are currently set in the Config Classes' postProcessMessage()
+    protected static void addWorkflowHeaders(String workflowDescriptor, String replyQueueName, Message message) {
 
         // The remaining route==the full route
         String X_WKF_ROUTE_REMAIN = workflowDescriptor;
@@ -288,5 +286,10 @@ public class WorkflowManagement {
         message.getMessageProperties().getHeaders().put(X_WKF_INTERNAL_CORR_ID_HDR, X_WKF_INTERNAL_CORR_ID);
         message.getMessageProperties().getHeaders().put(X_WKF_ROUTE_REMAIN_HDR, X_WKF_ROUTE_REMAIN);
         message.getMessageProperties().getHeaders().put(X_WKF_ROUTE_PROCESSED_HDR, X_WKF_ROUTE_PROCESSED);
+        // The address to which a message shall be routed upon successful completion of workflow
+        message.getMessageProperties().getHeaders().put(WorkflowManagement.X_WKF_TERMINAL_ADDR_HDR, replyQueueName);
+        // The address to which a message shall be routed upon error/exception
+        message.getMessageProperties().getHeaders().put(WorkflowManagement.X_WKF_ERROR_ADDR_HDR, replyQueueName);    
+        
     }
 }
