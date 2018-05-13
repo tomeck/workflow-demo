@@ -1,7 +1,7 @@
 package com.teck.components.api;
 
 import com.teck.workflow.*;
-
+import com.teck.components.RestComponentConfig;
 import com.teck.components.domain.Cat;
 import com.teck.components.service.CatService;
 
@@ -29,7 +29,10 @@ public class CatController {
     private CatService catService;
 
     @Autowired
-	private RabbitTemplate template;
+    private RabbitTemplate template;
+    
+    @Autowired
+    private RestComponentConfig config;
 
     private static final Logger log = LoggerFactory.getLogger(CatController.class);
 
@@ -56,7 +59,7 @@ public class CatController {
 
 		// Grab a workflow descriptor
 		// TODO - obtain from config server
-        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"},{\"Name\":\"C\", \"NextAddr\":\"requests\"}, {\"Name\":\"D\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"} ]}";
+		String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"API Controller-receive\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transform psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transform isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmit-ToBank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transform-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transform-isftopsd2resp\", \"NextAddr\":\"Origin\"}  ]}";
 
 		// Create payload
 		String payload = cat.toString();
@@ -70,7 +73,7 @@ public class CatController {
 
 		try {
 			// Begin workflow and wait for ultimate response; confirms that internal correlationId matches req-resp
-			Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template);
+			Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template, config.replyQueueName());
 
 			// DEBUG ONLY
 			respVal = new String(respMessage.getBody());

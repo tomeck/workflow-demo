@@ -31,9 +31,9 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numLoops = 1000; // will run out of thread space if increase too much more
+		int numThreads = 1; // will run out of thread space if increase too much more
 
-		for (int i = 0; i < numLoops; i++) {
+		for(int j = 0; j < numThreads; j++ ) {
 			//startWorkflow();
 			// JTE make all the workflows run in parallel
 			new Thread( () -> startWorkflow() ).start();
@@ -114,7 +114,7 @@ public class ComponentA implements CommandLineRunner {
 		// TODO - obtain from config server
         //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"componentA\", \"NextAddr\":\"banksy.q1\"}, {\"Name\":\"psd2-uk-to-isf\", \"NextAddr\":\"banksy.q2\"},{\"Name\":\"internal-router\", \"NextAddr\":\"banksy.q3\"}, {\"Name\":\"internal-router\", \"NextAddr\":\"reply-to\"} ]}";
         //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
-        String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"apicontroller\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transformer-1-transform.psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transformer-2-isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmitter-1-tobank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transformer-3-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transformer-4-isftopsd2resp\", \"NextAddr\":\"reply-to\"}  ]}";
+		String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"API Controller-receive\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transform psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transform isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmit-ToBank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transform-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transform-isftopsd2resp\", \"NextAddr\":\"Origin\"}  ]}";
 
 		// Create payload
 		String payload = "Hello from Component A";

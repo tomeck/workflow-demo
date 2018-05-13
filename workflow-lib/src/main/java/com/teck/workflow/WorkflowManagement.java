@@ -41,7 +41,7 @@ public class WorkflowManagement {
 
     // When this value appears as the next step in a workflow, replace the next routing key
     // with the value of headers[X_WKF_TERMINAL_ADDR_HDR]
-    public static final String RETURN_TO_ORIGINATOR_ADDR = "reply-to";
+    public static final String RETURN_TO_ORIGINATOR_ADDR = "Origin";
 
 
     // TODO refactor the two overloads of advanceWorkflowStage
