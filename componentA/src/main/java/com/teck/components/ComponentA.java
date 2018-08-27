@@ -31,7 +31,7 @@ public class ComponentA implements CommandLineRunner {
 
 		//jsonFun();
 
-		int numThreads = 1; // will run out of thread space if increase too much more
+		int numThreads = 3; // will run out of thread space if increase too much more
 
 		for(int j = 0; j < numThreads; j++ ) {
 			//startWorkflow();
@@ -110,32 +110,39 @@ public class ComponentA implements CommandLineRunner {
 
 	protected void startWorkflow()  {
 
-		// Grab a workflow descriptor
-		// TODO - obtain from config server
-        //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"componentA\", \"NextAddr\":\"banksy.q1\"}, {\"Name\":\"psd2-uk-to-isf\", \"NextAddr\":\"banksy.q2\"},{\"Name\":\"internal-router\", \"NextAddr\":\"banksy.q3\"}, {\"Name\":\"internal-router\", \"NextAddr\":\"reply-to\"} ]}";
-        //String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
-		String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"API Controller-receive\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transform psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transform isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmit-ToBank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transform-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transform-isftopsd2resp\", \"NextAddr\":\"Origin\"}  ]}";
+		final int NUM_ITERATIONS = 500;
+		for(int i=0; i<NUM_ITERATIONS; i++) {
+			// Grab a workflow descriptor
+			// TODO - obtain from config server
+			//String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"componentA\", \"NextAddr\":\"banksy.q1\"}, {\"Name\":\"psd2-uk-to-isf\", \"NextAddr\":\"banksy.q2\"},{\"Name\":\"internal-router\", \"NextAddr\":\"banksy.q3\"}, {\"Name\":\"internal-router\", \"NextAddr\":\"reply-to\"} ]}";
+			//String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"A\", \"NextAddr\":\"requests\"}, {\"Name\":\"B\", \"NextAddr\":\"processed\"}, {\"Name\":\"C\", \"NextAddr\":\"reply-to\"}  ]}";
+			//String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"API Controller-receive\", \"NextAddr\":\"transform.psd2toisf\"}, {\"Name\":\"Transform psd2toisf\", \"NextAddr\":\"transform.isftoiso20022\"}, {\"Name\":\"Transform isftoiso20022\", \"NextAddr\":\"transmit.tobank1\"}, {\"Name\":\"Transmit-ToBank1\", \"NextAddr\":\"transform.iso20022resptoisf\"}, {\"Name\":\"Transform-iso20022resptoisf\", \"NextAddr\":\"transform.isftopsd2resp\"}, {\"Name\":\"Transform-isftopsd2resp\", \"NextAddr\":\"Origin\"}  ]}";
+			String WORKFLOW_DESCRIPTOR = "{ \"remainWkflw\":[ {\"Name\":\"Initiator component\", \"NextAddr\":\"q1\"}, {\"Name\":\"Multiplier\", \"NextAddr\":\"q2\"}, {\"Name\":\"Adder\", \"NextAddr\":\"Origin\"}]}";
 
-		// Create payload
-		String payload = "Hello from Component A";
+			// Create payload
+			//String payload = "Hello from Component A";
+			String payload = "10";  //JTE TODO make this randow
 
-		// Build a message
-		Message mqMessage =  MessageBuilder
-			.withBody(payload.getBytes())
-			.build();
-			
-		log.info("Sending message <" + payload + ">");
+			// Build a message
+			Message mqMessage =  MessageBuilder
+				.withBody(payload.getBytes())
+				.build();
+				
+			try {
+				// Begin workflow and wait for ultimate response; confirms that internal correlationId matches req-resp
+				Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template, config.replyQueueName());
 
-		try {
-			// Begin workflow and wait for ultimate response; confirms that internal correlationId matches req-resp
-			Message respMessage = (Message)WorkflowManagement.beginWorkflowAndReceive( WORKFLOW_DESCRIPTOR, mqMessage, template, config.replyQueueName());
+				String reqCorrId = (String)mqMessage.getMessageProperties().getHeaders().get(WorkflowManagement.X_WKF_INTERNAL_CORR_ID_HDR);
+				log.info("Sending message <" + payload + ">" + " with internalCorrelationId " + reqCorrId);
 
-			// DEBUG ONLY
-			String respVal = new String(respMessage.getBody());
-			log.info("Sent <" + payload + ">, received <" + respVal +">]");	
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
+				// DEBUG ONLY
+				String respCorrId = (String)respMessage.getMessageProperties().getHeaders().get(WorkflowManagement.X_WKF_INTERNAL_CORR_ID_HDR);
+				String respVal = new String(respMessage.getBody());
+				log.info("Sent <" + payload + ">, received <" + respVal +"> for message with internalCorrelationId " + respCorrId);	
+			} catch (Exception e) {
+				log.error(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 }

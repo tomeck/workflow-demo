@@ -43,7 +43,7 @@ Start the 'processing' components:
 Now start the 'sourcing' component, ComponentA, which will immediately start placing queue messages on the input queue
 and Components B and C will process them and return the result back to ComponentA
 
-```$ java -jar componentC/target/componentA-0.0.1-SNAPSHOT.jar```
+```$ java -jar componentA/target/componentA-0.0.1-SNAPSHOT.jar```
 
 
 Start the Rest Controller which also acts as a source .There is a Jmeter script incuded in the restComponent folder that shows the HTTP POST
