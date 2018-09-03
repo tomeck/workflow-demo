@@ -25,3 +25,5 @@ nbdist/
 
 ### Mac ###
 .DS_Store
+*.log
+*/.sts4-cache/classpath-data.json
