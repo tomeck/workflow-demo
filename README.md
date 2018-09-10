@@ -4,11 +4,11 @@ Demo containing multiple headless and REST components illustrating how to use te
 ## Prerequisites
 Install Docker image of RabbitMQ
 
-Create a 'direct' exchange named 'wf-demo'
+Create a 'topic' exchange named 'wf-demo-topic'
 
-Create a queue 'wf-demo.requests' bound to exchange 'wf-demo' with routing key 'requests'
+Create a queue 'q1' bound to exchange 'wf-demo' with routing key 'q1'
 
-Create a queue 'wf-demo.processed' bound to exchange 'wf-demo' with routing key 'processed'
+Create a queue 'q2' bound to exchange 'wf-demo' with routing key 'q2'
 
 ## Message flow
 
